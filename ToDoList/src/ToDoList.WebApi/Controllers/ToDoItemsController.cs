@@ -2,6 +2,9 @@ namespace ToDoList.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -27,30 +30,95 @@ public class ToDoItemsController : ControllerBase
         }
 
         //respond to client
-        return NoContent(); //201 //tato metoda z nějakého důvodu vrací status code No Content 204, zjištujeme proč ;)
+        return CreatedAtAction(nameof(Read), new { id = item.ToDoItemId }, item); //201
+
     }
 
     [HttpGet]
     public IActionResult Read()
     {
-        return Ok();
+        try
+        {
+            if (items.Count == 0)
+            {
+                return NotFound(); // 404
+            }
+            else
+            {
+                var response = items.Select(item => ToDoItemGetResponseDto.FromDomain(item)).ToList();
+                return Ok(response); // 200
+            }
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
+        }
     }
 
     [HttpGet("{toDoItemId:int}")]
     public IActionResult ReadById(int toDoItemId)
     {
-        return Ok();
+        try
+        {
+            var item = items.Find(i => i.ToDoItemId == toDoItemId);
+
+            if (item == null)
+            {
+                return NotFound(); // 404
+            }
+
+            var response = ToDoItemGetResponseDto.FromDomain(item);
+            return Ok(response); // 200
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
+        }
     }
 
     [HttpPut("{toDoItemId:int}")]
     public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
-        return Ok();
+        try
+        {
+            var index = items.FindIndex(i => i.ToDoItemId == toDoItemId);
+
+            if (items[index] == null)
+            {
+                return NotFound(); // 404
+            }
+
+            // Aktualizace položky dle indexu
+            items[index].Name = request.Name;
+            items[index].Description = request.Description;
+            items[index].IsCompleted = request.IsCompleted;
+
+            return NoContent(); // 204
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
+        }
     }
 
     [HttpDelete("{toDoItemId:int}")]
     public IActionResult DeleteById(int toDoItemId)
     {
-        return Ok();
+        try
+        {
+            var item = items.Find(i => i.ToDoItemId == toDoItemId);
+
+            if (item == null)
+            {
+                return NotFound(); // 404
+            }
+
+            items.Remove(item);
+            return NoContent(); // 204
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
+        }
     }
 }
