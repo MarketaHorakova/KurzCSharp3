@@ -97,12 +97,14 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
         }
     }
+    public object UpdateById(int v, ToDoItemCreateRequestDto updateRequest) => throw new NotImplementedException();
 
     [HttpDelete("{toDoItemId:int}")]
     public IActionResult DeleteById(int toDoItemId)
     {
         try
         {
+
             var item = items.Find(i => i.ToDoItemId == toDoItemId);
 
             if (item == null)
@@ -118,4 +120,5 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
         }
     }
+
 }

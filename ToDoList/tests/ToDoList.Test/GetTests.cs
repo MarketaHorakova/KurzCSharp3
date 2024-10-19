@@ -28,5 +28,22 @@ namespace ToDoList.Test
             Assert.True(resultResult is OkObjectResult);
             Assert.IsType<OkObjectResult>(resultResult);
         }
+
+        public void Get_ItemById_ItemId()
+        {
+            // Arrange
+            var controller = new ToDoItemsController();
+            var toDoItem = new ToDoItem();
+            ToDoItemsController.items.Add(toDoItem);
+
+            // Act
+            var result = controller.Read();
+            var value = result.Value;
+            var resultResult = result.Result;
+
+            // Assert
+            Assert.True(resultResult is OkObjectResult);
+            Assert.IsType<OkObjectResult>(resultResult);
+        }
     }
 }

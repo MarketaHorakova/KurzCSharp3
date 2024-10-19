@@ -1,7 +1,10 @@
 namespace ToDoList.Domain.DTOs;
-using ToDoList.Domain.Models;
 
-public record ToDoItemUpdateRequestDto(string Name, string Description, bool IsCompleted)
+
+public class ToDoItemUpdateRequestDto
 {
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public bool IsCompleted { get; set; }
 
 }
