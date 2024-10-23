@@ -16,7 +16,7 @@ namespace ToDoList.Test
         {
             // Arrange
             var controller = new ToDoItemsController();
-            var toDoItem = new ToDoItem {ToDoItemId = 1, Name = "Test Item", Description = "Test Description", IsCompleted = false };
+            var toDoItem = new ToDoItem { ToDoItemId = 1, Name = "Test Item", Description = "Test Description", IsCompleted = false };
             ToDoItemsController.items.Add(toDoItem);
 
             // Act
