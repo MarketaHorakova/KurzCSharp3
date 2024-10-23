@@ -10,7 +10,7 @@ using System.Collections.Generic;
 [Route("api/[controller]")]
 public class ToDoItemsController : ControllerBase
 {
-    private static readonly List<ToDoItem> items = [];
+    public static readonly List<ToDoItem> items = [];
 
     [HttpPost]
     public IActionResult Create(ToDoItemCreateRequestDto request)
@@ -35,24 +35,21 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult Read()
+    public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
+        List<ToDoItem> itemsToGet;
         try
         {
-            if (items.Count == 0)
-            {
-                return NotFound(); // 404
-            }
-            else
-            {
-                var response = items.Select(item => ToDoItemGetResponseDto.FromDomain(item)).ToList();
-                return Ok(response); // 200
-            }
+            itemsToGet = items;
         }
         catch (Exception ex)
         {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
+        //respond to client
+        return (itemsToGet is null)
+            ? NotFound() //404
+            : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
     }
 
     [HttpGet("{toDoItemId:int}")]
@@ -100,12 +97,14 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
         }
     }
+    public object UpdateById(int v, ToDoItemCreateRequestDto updateRequest) => throw new NotImplementedException();
 
     [HttpDelete("{toDoItemId:int}")]
     public IActionResult DeleteById(int toDoItemId)
     {
         try
         {
+
             var item = items.Find(i => i.ToDoItemId == toDoItemId);
 
             if (item == null)
@@ -121,4 +120,5 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); // 500
         }
     }
+
 }

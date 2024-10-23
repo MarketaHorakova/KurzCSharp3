@@ -1,7 +1,7 @@
 namespace ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 
-public record ToDoItemCreateRequestDto(string Name, string Description, bool IsCompleted) //id is generated
+public class ToDoItemCreateRequestDto(string Name, string Description, bool IsCompleted) //id is generated
 {
     public string Name { get; set; }
     public string Description { get; set; }
